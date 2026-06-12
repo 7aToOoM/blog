@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LifeMonitor</string>
+    <string name="notification_channel_monitor">Usage Monitor</string>
+    <string name="notification_channel_reports">Daily Reports</string>
+    <string name="notification_monitor_title">LifeMonitor is active</string>
+    <string name="notification_monitor_text">Tracking your phone usage to generate insights</string>
+    <string name="notification_report_title">Your Daily Report is Ready</string>
+    <string name="notification_report_text">Tap to view your AI-powered life insights</string>
+</resources>
