@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import { useCart } from '../context/CartContext';
+import { addOrder } from '../lib/clientStore';
 import Link from 'next/link';
 
 export default function Checkout() {
@@ -51,21 +52,17 @@ export default function Checkout() {
     setSubmitting(true);
 
     try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customer: { name: `${form.firstName} ${form.lastName}`, email: form.email, phone: form.phone },
-          items: items.map((i) => ({ id: i.id, name: i.name, type: i.type, price: i.price, qty: i.qty })),
-          total: totalPrice,
-          address: { street: form.address, city: form.city, state: form.state, zip: form.zip },
-        }),
+      const order = addOrder({
+        id: `ord${Date.now()}`,
+        customer: { name: `${form.firstName} ${form.lastName}`, email: form.email, phone: form.phone },
+        items: items.map((i) => ({ id: i.id, name: i.name, type: i.type, price: i.price, qty: i.qty })),
+        total: totalPrice,
+        address: { street: form.address, city: form.city, state: form.state, zip: form.zip },
+        status: 'pending',
+        createdAt: new Date().toISOString(),
       });
-      if (res.ok) {
-        const order = await res.json();
-        clearCart();
-        router.push(`/order-success?id=${order.id}`);
-      }
+      clearCart();
+      router.push(`/order-success?id=${order.id}`);
     } catch {
       setSubmitting(false);
     }

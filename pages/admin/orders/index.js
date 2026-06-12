@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminLayout from '../../../components/AdminLayout';
-import { getOrders } from '../../../lib/dataStore';
+import { getOrders, updateOrderStatus } from '../../../lib/clientStore';
 
 const STATUS_STYLES = {
   pending: 'bg-yellow-100 text-yellow-700',
@@ -9,17 +9,17 @@ const STATUS_STYLES = {
   cancelled: 'bg-red-100 text-red-600',
 };
 
-export default function AdminOrders({ initialOrders }) {
-  const [orders, setOrders] = useState(initialOrders);
+export default function AdminOrders() {
+  const [orders, setOrders] = useState([]);
   const [expanded, setExpanded] = useState(null);
 
-  const updateStatus = async (id, status) => {
-    await fetch(`/api/orders/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status }),
-    });
-    setOrders((prev) => prev.map((o) => o.id === id ? { ...o, status } : o));
+  useEffect(() => {
+    setOrders(getOrders());
+  }, []);
+
+  const handleStatus = (id, status) => {
+    updateOrderStatus(id, status);
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
   };
 
   return (
@@ -27,19 +27,14 @@ export default function AdminOrders({ initialOrders }) {
       <div className="mb-6">
         <p className="text-stone-500 text-sm">{orders.length} total orders</p>
       </div>
-
       {orders.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-stone-100 p-12 text-center text-stone-400">
-          No orders yet.
-        </div>
+        <div className="bg-white rounded-2xl border border-stone-100 p-12 text-center text-stone-400">No orders yet.</div>
       ) : (
         <div className="space-y-3">
           {[...orders].reverse().map((order) => (
             <div key={order.id} className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-              <div
-                className="flex items-center justify-between p-4 cursor-pointer hover:bg-stone-50 transition-colors"
-                onClick={() => setExpanded(expanded === order.id ? null : order.id)}
-              >
+              <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-stone-50 transition-colors"
+                onClick={() => setExpanded(expanded === order.id ? null : order.id)}>
                 <div className="flex items-center gap-4 min-w-0">
                   <div>
                     <p className="font-medium text-stone-900">{order.customer?.name}</p>
@@ -57,7 +52,6 @@ export default function AdminOrders({ initialOrders }) {
                   </svg>
                 </div>
               </div>
-
               {expanded === order.id && (
                 <div className="px-4 pb-4 border-t border-stone-50">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -84,15 +78,11 @@ export default function AdminOrders({ initialOrders }) {
                       </div>
                     </div>
                   </div>
-
-                  <div className="mt-4 flex items-center gap-2">
+                  <div className="mt-4 flex items-center gap-2 flex-wrap">
                     <span className="text-sm text-stone-600 mr-2">Update Status:</span>
                     {['pending', 'confirmed', 'delivered', 'cancelled'].map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => updateStatus(order.id, s)}
-                        className={`text-xs px-3 py-1.5 rounded-lg transition-colors capitalize ${order.status === s ? `${STATUS_STYLES[s]} font-semibold` : 'bg-stone-100 hover:bg-stone-200 text-stone-600'}`}
-                      >
+                      <button key={s} onClick={() => handleStatus(order.id, s)}
+                        className={`text-xs px-3 py-1.5 rounded-lg transition-colors capitalize ${order.status === s ? `${STATUS_STYLES[s]} font-semibold` : 'bg-stone-100 hover:bg-stone-200 text-stone-600'}`}>
                         {s}
                       </button>
                     ))}
@@ -105,8 +95,4 @@ export default function AdminOrders({ initialOrders }) {
       )}
     </AdminLayout>
   );
-}
-
-export async function getServerSideProps() {
-  return { props: { initialOrders: getOrders() } };
 }

@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminLayout from '../../../components/AdminLayout';
 import Link from 'next/link';
-import { getServices } from '../../../lib/dataStore';
+import { getServices, deleteService } from '../../../lib/clientStore';
 
-export default function AdminServices({ initialServices }) {
-  const [services, setServices] = useState(initialServices);
-  const [deleting, setDeleting] = useState(null);
+export default function AdminServices() {
+  const [services, setServices] = useState([]);
 
-  const handleDelete = async (id) => {
+  useEffect(() => {
+    setServices(getServices());
+  }, []);
+
+  const handleDelete = (id) => {
     if (!confirm('Delete this service?')) return;
-    setDeleting(id);
-    await fetch(`/api/services/${id}`, { method: 'DELETE' });
+    deleteService(id);
     setServices((prev) => prev.filter((s) => s.id !== id));
-    setDeleting(null);
   };
 
   return (
@@ -28,7 +29,6 @@ export default function AdminServices({ initialServices }) {
           </a>
         </Link>
       </div>
-
       <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden shadow-sm">
         <table className="w-full text-sm">
           <thead className="bg-stone-50 border-b border-stone-100">
@@ -42,9 +42,7 @@ export default function AdminServices({ initialServices }) {
           </thead>
           <tbody className="divide-y divide-stone-50">
             {services.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="text-center py-12 text-stone-400">No services yet.</td>
-              </tr>
+              <tr><td colSpan={5} className="text-center py-12 text-stone-400">No services yet.</td></tr>
             ) : (
               services.map((s) => (
                 <tr key={s.id} className="hover:bg-stone-50 transition-colors">
@@ -73,15 +71,12 @@ export default function AdminServices({ initialServices }) {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2 justify-end">
-                      <Link href={`/admin/services/${s.id}`}>
+                      <Link href={`/admin/services/edit?id=${s.id}`}>
                         <a className="text-xs px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors">Edit</a>
                       </Link>
-                      <button
-                        onClick={() => handleDelete(s.id)}
-                        disabled={deleting === s.id}
-                        className="text-xs px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {deleting === s.id ? '...' : 'Delete'}
+                      <button onClick={() => handleDelete(s.id)}
+                        className="text-xs px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors">
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -93,8 +88,4 @@ export default function AdminServices({ initialServices }) {
       </div>
     </AdminLayout>
   );
-}
-
-export async function getServerSideProps() {
-  return { props: { initialServices: getServices() } };
 }

@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminLayout from '../../../components/AdminLayout';
 import Link from 'next/link';
-import { getProducts } from '../../../lib/dataStore';
+import { getProducts, deleteProduct } from '../../../lib/clientStore';
 
-export default function AdminProducts({ initialProducts }) {
-  const [products, setProducts] = useState(initialProducts);
-  const [deleting, setDeleting] = useState(null);
+export default function AdminProducts() {
+  const [products, setProducts] = useState([]);
 
-  const handleDelete = async (id) => {
+  useEffect(() => {
+    setProducts(getProducts());
+  }, []);
+
+  const handleDelete = (id) => {
     if (!confirm('Delete this product?')) return;
-    setDeleting(id);
-    await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    deleteProduct(id);
     setProducts((prev) => prev.filter((p) => p.id !== id));
-    setDeleting(null);
   };
 
   return (
@@ -28,7 +29,6 @@ export default function AdminProducts({ initialProducts }) {
           </a>
         </Link>
       </div>
-
       <div className="bg-white rounded-2xl border border-stone-100 overflow-hidden shadow-sm">
         <table className="w-full text-sm">
           <thead className="bg-stone-50 border-b border-stone-100">
@@ -43,9 +43,7 @@ export default function AdminProducts({ initialProducts }) {
           </thead>
           <tbody className="divide-y divide-stone-50">
             {products.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="text-center py-12 text-stone-400">No products yet. Add your first product.</td>
-              </tr>
+              <tr><td colSpan={6} className="text-center py-12 text-stone-400">No products yet. Add your first product.</td></tr>
             ) : (
               products.map((p) => (
                 <tr key={p.id} className="hover:bg-stone-50 transition-colors">
@@ -79,15 +77,12 @@ export default function AdminProducts({ initialProducts }) {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2 justify-end">
-                      <Link href={`/admin/products/${p.id}`}>
+                      <Link href={`/admin/products/edit?id=${p.id}`}>
                         <a className="text-xs px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg transition-colors">Edit</a>
                       </Link>
-                      <button
-                        onClick={() => handleDelete(p.id)}
-                        disabled={deleting === p.id}
-                        className="text-xs px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        {deleting === p.id ? '...' : 'Delete'}
+                      <button onClick={() => handleDelete(p.id)}
+                        className="text-xs px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors">
+                        Delete
                       </button>
                     </div>
                   </td>
@@ -99,8 +94,4 @@ export default function AdminProducts({ initialProducts }) {
       </div>
     </AdminLayout>
   );
-}
-
-export async function getServerSideProps() {
-  return { props: { initialProducts: getProducts() } };
 }

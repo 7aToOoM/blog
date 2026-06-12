@@ -2,35 +2,29 @@ import { useRef, useState } from 'react';
 
 export default function ImageUpload({ value, onChange, label = 'Product Image' }) {
   const inputRef = useRef(null);
-  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleFile = async (file) => {
+  const handleFile = (file) => {
     if (!file) return;
     setError('');
-    setUploading(true);
-    try {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const dataUrl = e.target.result;
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ dataUrl, filename: file.name }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-          onChange(data.url);
-        } else {
-          setError(data.error || 'Upload failed');
-        }
-        setUploading(false);
-      };
-      reader.readAsDataURL(file);
-    } catch {
-      setError('Upload failed');
-      setUploading(false);
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type)) {
+      setError('Only JPG, PNG, WebP, or GIF images are allowed');
+      return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be under 5 MB');
+      return;
+    }
+    setLoading(true);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      onChange(e.target.result);
+      setLoading(false);
+    };
+    reader.onerror = () => { setError('Failed to read file'); setLoading(false); };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -53,31 +47,25 @@ export default function ImageUpload({ value, onChange, label = 'Product Image' }
           )}
         </div>
         <div className="flex-1">
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => handleFile(e.target.files[0])}
-          />
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
-            className="px-4 py-2 text-sm bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 transition-colors disabled:opacity-50"
-          >
-            {uploading ? 'Uploading...' : 'Choose Image'}
+          <input ref={inputRef} type="file" accept="image/*" className="hidden"
+            onChange={(e) => handleFile(e.target.files[0])} />
+          <button type="button" onClick={() => inputRef.current?.click()} disabled={loading}
+            className="px-4 py-2 text-sm bg-stone-100 hover:bg-stone-200 rounded-lg border border-stone-300 transition-colors disabled:opacity-50">
+            {loading ? 'Loading...' : 'Choose Image'}
           </button>
           <div className="mt-2">
             <label className="block text-xs text-stone-500 mb-1">Or paste image URL:</label>
-            <input
-              type="text"
-              value={value || ''}
+            <input type="text" value={value && value.startsWith('data:') ? '' : (value || '')}
               onChange={(e) => onChange(e.target.value)}
               placeholder="https://example.com/image.jpg"
-              className="w-full text-sm border border-stone-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
+              className="w-full text-sm border border-stone-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400" />
           </div>
+          {value && !value.startsWith('data:') && (
+            <p className="text-xs text-stone-400 mt-1">Using URL: {value.length > 40 ? value.slice(0, 40) + '...' : value}</p>
+          )}
+          {value && value.startsWith('data:') && (
+            <p className="text-xs text-teal-600 mt-1">Image uploaded successfully</p>
+          )}
           {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
         </div>
       </div>

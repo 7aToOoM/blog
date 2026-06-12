@@ -1,8 +1,24 @@
+import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/AdminLayout';
 import Link from 'next/link';
-import { getProducts, getServices, getOrders } from '../../lib/dataStore';
+import { getProducts, getServices, getOrders } from '../../lib/clientStore';
 
-export default function AdminDashboard({ stats }) {
+export default function AdminDashboard() {
+  const [stats, setStats] = useState({ products: 0, services: 0, orders: 0, revenue: 0, recentOrders: [] });
+
+  useEffect(() => {
+    const products = getProducts();
+    const services = getServices();
+    const orders = getOrders();
+    setStats({
+      products: products.length,
+      services: services.length,
+      orders: orders.length,
+      revenue: orders.reduce((sum, o) => sum + (o.total || 0), 0),
+      recentOrders: [...orders].reverse().slice(0, 5),
+    });
+  }, []);
+
   const cards = [
     { label: 'Total Products', value: stats.products, href: '/admin/products', color: 'bg-amber-50 border-amber-200', textColor: 'text-amber-600' },
     { label: 'Total Services', value: stats.services, href: '/admin/services', color: 'bg-teal-50 border-teal-200', textColor: 'text-teal-600' },
@@ -22,12 +38,9 @@ export default function AdminDashboard({ stats }) {
           </Link>
         ))}
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl border border-stone-100 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-stone-900">Quick Actions</h2>
-          </div>
+          <h2 className="font-semibold text-stone-900 mb-4">Quick Actions</h2>
           <div className="space-y-3">
             <Link href="/admin/products/new">
               <a className="flex items-center gap-3 px-4 py-3 bg-amber-50 hover:bg-amber-100 rounded-xl transition-colors text-sm font-medium text-amber-800">
@@ -55,7 +68,6 @@ export default function AdminDashboard({ stats }) {
             </Link>
           </div>
         </div>
-
         <div className="bg-white rounded-2xl border border-stone-100 p-6">
           <h2 className="font-semibold text-stone-900 mb-4">Recent Orders</h2>
           {stats.recentOrders.length === 0 ? (
@@ -82,21 +94,4 @@ export default function AdminDashboard({ stats }) {
       </div>
     </AdminLayout>
   );
-}
-
-export async function getServerSideProps() {
-  const products = getProducts();
-  const services = getServices();
-  const orders = getOrders();
-  return {
-    props: {
-      stats: {
-        products: products.length,
-        services: services.length,
-        orders: orders.length,
-        revenue: orders.reduce((sum, o) => sum + (o.total || 0), 0),
-        recentOrders: orders.slice(-5).reverse(),
-      },
-    },
-  };
 }

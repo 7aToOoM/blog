@@ -1,0 +1,11 @@
+{
+  "appId": "com.luxefurnish.app",
+  "appName": "LuxeFurnish",
+  "webDir": "out",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

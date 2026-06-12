@@ -1,10 +1,19 @@
+import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import ProductCard from '../components/ProductCard';
 import ServiceCard from '../components/ServiceCard';
 import Link from 'next/link';
-import { getProducts, getServices } from '../lib/dataStore';
+import { getProducts, getServices } from '../lib/clientStore';
 
-export default function Home({ featuredProducts, featuredServices }) {
+export default function Home() {
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [featuredServices, setFeaturedServices] = useState([]);
+
+  useEffect(() => {
+    setFeaturedProducts(getProducts().filter((p) => p.featured).slice(0, 3));
+    setFeaturedServices(getServices().filter((s) => s.featured).slice(0, 3));
+  }, []);
+
   return (
     <Layout>
       {/* Hero */}
@@ -97,15 +106,4 @@ export default function Home({ featuredProducts, featuredServices }) {
       </section>
     </Layout>
   );
-}
-
-export async function getServerSideProps() {
-  const products = getProducts();
-  const services = getServices();
-  return {
-    props: {
-      featuredProducts: products.filter((p) => p.featured).slice(0, 3),
-      featuredServices: services.filter((s) => s.featured).slice(0, 3),
-    },
-  };
 }

@@ -26,7 +26,7 @@ export default function ServiceCard({ service, index = 0 }) {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-stone-100 flex flex-col">
-      <Link href={`/services/${service.id}`}>
+      <Link href={`/services?id=${service.id}`}>
         <a className="block">
           <div className={`h-44 bg-gradient-to-br ${iconData.bg} flex items-center justify-center`}>
             {service.image ? (
@@ -40,7 +40,7 @@ export default function ServiceCard({ service, index = 0 }) {
         </a>
       </Link>
       <div className="p-4 flex flex-col flex-1">
-        <Link href={`/services/${service.id}`}>
+        <Link href={`/services?id=${service.id}`}>
           <a>
             <h3 className="font-semibold text-stone-900 hover:text-amber-700 transition-colors">{service.name}</h3>
           </a>

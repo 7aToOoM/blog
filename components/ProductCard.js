@@ -32,7 +32,7 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-stone-100 flex flex-col">
-      <Link href={`/products/${product.id}`}>
+      <Link href={`/products?id=${product.id}`}>
         <a className="block">
           <div className={`h-52 bg-gradient-to-br ${CATEGORY_BG[product.category] || 'from-stone-100 to-stone-200'} relative`}>
             {product.image ? (
@@ -60,7 +60,7 @@ export default function ProductCard({ product }) {
       </Link>
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-2">
-          <Link href={`/products/${product.id}`}>
+          <Link href={`/products?id=${product.id}`}>
             <a>
               <h3 className="font-semibold text-stone-900 hover:text-amber-700 transition-colors leading-tight">
                 {product.name}
