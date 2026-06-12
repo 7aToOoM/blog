@@ -1,0 +1,4 @@
+-keep class com.lifemonitor.app.data.remote.dto.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn okhttp3.**
