@@ -1,0 +1,79 @@
+name: Build & Release APK
+
+on:
+  push:
+    branches: [main, claude/furniture-sales-app-o2i48w]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Build LuxeFurnish APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: CYPRESS_INSTALL_BINARY=0 npm ci
+
+      - name: Build & export static site
+        run: npm run export
+
+      - name: Sync web assets and plugins into Android project
+        run: npx cap sync android
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK platform & build tools
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Rename APK
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/LuxeFurnish.apk
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LuxeFurnish-APK
+          path: dist/LuxeFurnish.apk
+          retention-days: 30
+
+      - name: Create/update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: LuxeFurnish App (latest build)
+          body: |
+            ## Download LuxeFurnish APK
+
+            **Install on Android:**
+            1. Download `LuxeFurnish.apk` below
+            2. On your Android phone: Settings → Security → enable **Install unknown apps**
+            3. Open the downloaded APK and tap Install
+
+            **Default admin password:** `admin123`
+          files: dist/LuxeFurnish.apk
+          make_latest: true

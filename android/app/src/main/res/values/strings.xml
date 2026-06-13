@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LuxeFurnish</string>
+    <string name="title_activity_main">LuxeFurnish</string>
+    <string name="package_name">com.luxefurnish.app</string>
+    <string name="custom_url_scheme">com.luxefurnish.app</string>
+</resources>

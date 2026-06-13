@@ -1,0 +1,42 @@
+[
+  {
+    "id": "s1",
+    "name": "Interior Design Consultation",
+    "description": "A 2-hour one-on-one session with one of our certified interior designers. We'll discuss your space, style preferences, and create a mood board tailored to you.",
+    "price": 199,
+    "duration": "2 hours",
+    "image": "",
+    "featured": true,
+    "createdAt": "2024-01-10"
+  },
+  {
+    "id": "s2",
+    "name": "White-Glove Delivery & Assembly",
+    "description": "Our professional team will deliver, place, and fully assemble your furniture in any room. Includes removal of all packaging and old furniture if needed.",
+    "price": 149,
+    "duration": "Half day",
+    "image": "",
+    "featured": true,
+    "createdAt": "2024-01-10"
+  },
+  {
+    "id": "s3",
+    "name": "Furniture Restoration",
+    "description": "Expert restoration for antique or worn pieces. We refinish, re-upholster, and repair. Bring your cherished furniture back to life with our skilled craftsmen.",
+    "price": 299,
+    "duration": "3-5 days",
+    "image": "",
+    "featured": true,
+    "createdAt": "2024-01-11"
+  },
+  {
+    "id": "s4",
+    "name": "Custom Furniture Design",
+    "description": "Work directly with our master craftsmen to design and build bespoke furniture pieces. Choose every detail — wood type, dimensions, finish, and hardware.",
+    "price": 499,
+    "duration": "4-6 weeks",
+    "image": "",
+    "featured": false,
+    "createdAt": "2024-01-12"
+  }
+]

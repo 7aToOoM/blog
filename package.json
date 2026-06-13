@@ -1,26 +1,19 @@
 {
-  "name": "nextjs-blog-theme",
-  "description": "A customizable Next.js and Tailwind blog starter. Designed by the Bejamas agency.",
-  "author": "Bejamas and Netlify Inc.",
-  "contributors": [
-    "Charlie Gerard",
-    "Prince Wilson",
-    "Tara Manicsic",
-    "Thom Krupa"
-  ],
-  "homepage": "https://github.com/netlify-templates/nextjs-blog-theme",
-  "bugs": {
-    "url": "https://github.com/netlify-templates/nextjs-blog-theme/issues"
-  },
+  "name": "luxefurnish",
+  "description": "LuxeFurnish — furniture sales app built with Next.js and Capacitor",
+  "author": "LuxeFurnish",
   "scripts": {
     "dev": "next",
-    "dev:watch": "next-remote-watch ./posts",
     "build": "next build",
     "start": "next start",
     "export": "next build && next export",
+    "cap:sync": "next build && next export && cap sync android",
     "lint": "next lint"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
     "@mapbox/rehype-prism": "^0.8.0",
     "@tailwindcss/typography": "^0.5.0",
     "classnames": "^2.3.1",

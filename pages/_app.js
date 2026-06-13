@@ -1,12 +1,14 @@
 import '../styles/globals.css';
-import 'prismjs/themes/prism-tomorrow.css';
+import { CartProvider } from '../context/CartContext';
+import { AdminProvider } from '../context/AdminContext';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <>
-      <span className="theme-bejamas" />
-      <Component {...pageProps} />
-    </>
+    <AdminProvider>
+      <CartProvider>
+        <Component {...pageProps} />
+      </CartProvider>
+    </AdminProvider>
   );
 }
 
