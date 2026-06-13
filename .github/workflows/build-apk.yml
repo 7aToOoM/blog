@@ -70,7 +70,6 @@ jobs:
             <color name="colorPrimary">#10b981</color>
             <color name="colorPrimaryDark">#059669</color>
             <color name="colorAccent">#10b981</color>
-            <color name="ic_launcher_background">#10b981</color>
           </resources>
           EOF
 
