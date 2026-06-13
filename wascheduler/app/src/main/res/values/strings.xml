@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WA Scheduler</string>
+
+    <!-- Warning -->
+    <string name="warning_unofficial">⚠ Warning: This app uses unofficial WhatsApp automation (Accessibility + Notification APIs). This violates WhatsApp\'s ToS and may result in your number being banned. Use at your own risk.</string>
+
+    <!-- Section headers -->
+    <string name="section_permissions">Step 1 — Grant Required Permissions</string>
+    <string name="section_scheduled">Scheduled Messages</string>
+    <string name="section_autoreply">Auto-Reply</string>
+    <string name="label_rules">Rules (keyword → reply):</string>
+
+    <!-- Buttons -->
+    <string name="btn_notification_access">1. Enable Notification Access →</string>
+    <string name="btn_accessibility">2. Enable Accessibility Service →</string>
+    <string name="btn_overlay">3. Allow Display Over Other Apps →</string>
+    <string name="btn_add_schedule">+ Schedule</string>
+    <string name="btn_add_rule">+ Rule</string>
+
+    <!-- Services -->
+    <string name="accessibility_service_label">WA Scheduler – Send button tapper</string>
+    <string name="accessibility_service_description">Taps the WhatsApp Send button when a scheduled message alarm fires. Only active for ~90 seconds per scheduled send.</string>
+    <string name="notification_listener_label">WA Scheduler – Auto-reply listener</string>
+</resources>
