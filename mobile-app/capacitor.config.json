@@ -1,0 +1,13 @@
+{
+  "appId": "com.myfavouritenutritionist.app",
+  "appName": "My Favourite Nutritionist",
+  "webDir": "dist",
+  "server": { "androidScheme": "https" },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#10b981",
+      "showSpinner": false
+    }
+  }
+}
